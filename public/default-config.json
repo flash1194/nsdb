@@ -1,0 +1,94 @@
+{
+    "port": 8099,
+    "mongo": {
+        "query_time_ratio": 0.5,
+        "connection": "mongodb://localhost:27017",
+        "database": "nsdb_test",
+        "commands": [
+            "find",
+            "count",
+            "aggregate",
+            "distinct",
+            "group"
+        ]
+    },
+    "plugins": {
+        "eos": {
+            "script": "bpapi",
+            "config": {
+                "timeout": 15000,
+                "endpoint": "https://proxy.eosnode.tools"
+            }
+        },
+        "novusphere": {
+            "script": "novusphere",
+            "config": {
+                "disabled": false,
+                "collections": [
+                    {
+                        "name": "ns",
+                        "snapshot": "",
+                        "indices": [
+                            "createdAt",
+                            "transaction",
+                            "data.account",
+                            "data.json.protocol",
+                            "data.json.method"
+                        ]
+                    },
+                    {
+                        "name": "ns_account",
+                        "indices": [
+                            "name"
+                        ]
+                    },
+                    {
+                        "name": "ns_post_state",
+                        "indices": [
+                            "txid"
+                        ]
+                    },
+                    {
+                        "name": "ns_post_vote",
+                        "indices": [
+                            "txid"
+                        ]
+                    }
+                ],
+                "account": "novuspheredb",
+                "irreversible_only": false,
+                "json": {
+                    "push": "json"
+                }
+            }
+        },
+        "eosforum": {
+            "script": "eosforum",
+            "config": {
+                "disabled": false,
+                "collections": [
+                    {
+                        "name": "eosforum",
+                        "snapshot": "https://cdn.novusphere.io/static/snapshot/eosforum.json",
+                        "indices": [
+                            "createdAt",
+                            "name",
+                            "transaction",
+                            "tags",
+                            "data.json_metadata.sub",
+                            "data.post_uuid",
+                            "data.reply_to_post_uuid"
+                        ]
+                    }
+                ],
+                "account": "eosforumrcpp",
+                "irreversible_only": false,
+                "json": {
+                    "post": "json_metadata",
+                    "propose": "proposal_json",
+                    "vote": "vote_json"
+                }
+            }
+        }
+    }
+}

@@ -17,7 +17,7 @@
             "script": "bpapi",
             "config": {
                 "timeout": 15000,
-                "endpoint": "https://proxy.eosnode.tools"
+                "endpoint": "https://api.eossweden.se"
             }
         },
         "novusphere": {

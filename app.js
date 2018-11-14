@@ -24,9 +24,18 @@ app.use('/api', apiRouter);
 
     const config = JSON.parse(fs.readFileSync('config.json'));
 
+    console.log('loading mongodb...');
     const mongo = require('./mongo');
     mongo.start(config.mongo);
-
+    try { 
+        await mongo.getClient();
+    }
+    catch (ex) {
+        console.log('failed to load mongo db');
+        console.log(ex);
+        return;
+    }
+    
     const plugins = require('./plugins');
 
     console.log('loading plugins...');

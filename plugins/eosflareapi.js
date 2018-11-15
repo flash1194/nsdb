@@ -31,15 +31,17 @@ class EOSFlareAPIPlugin extends BlockProducerAPIPlugin {
     }
     async getActions(account, position, count) {
         //
-        // This is kind of inefficient due to how they designed the API, we require upto 3 requests
-        // 1 - determine number of records
-        // 2 - get first page worth of data
-        // 3 - get second page worth of data is not properly aligned
+        // This is kind of inefficient due to how they designed the API, we require upto 4 requests
+        // 1    - determine number of records
+        // 2    - get first page worth of data
+        // 2.5  - page align, if data is missing, we may have miscalculated what page we should be on
+        // 3    - get second page worth of data is not properly aligned
         //
         const MAX_TRY = 10;
+        const TRY_FAIL = "ran out of eosflare try attempts";
         for (var t = 0; ; t++) {
             if (t == MAX_TRY) {
-                throw new Error("ran out of eosflare try attempts");
+                throw new Error(TRY_FAIL);
             }
 
             const current_state = await this.getActionsFlare(account, 0, 0);
@@ -56,6 +58,9 @@ class EOSFlareAPIPlugin extends BlockProducerAPIPlugin {
             for (; ;) {
                 const state_1 = (await this.getActionsFlare(account, current_page, count));
                 if (state_1.total != current_state.total) {
+                    if (++t == MAX_TRY) {
+                        throw new Error(TRY_FAIL);
+                    }
                     continue;
                 }
 

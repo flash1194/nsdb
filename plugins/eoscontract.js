@@ -270,7 +270,7 @@ class EOSContractPlugin extends Plugin {
                 this.log('error at eoscontract::run');
                 console.log(ex);
             }
-            await this.sleep(3000);
+            await this.sleep(5000);
         }
     }
 }

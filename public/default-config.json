@@ -14,10 +14,10 @@
     },
     "plugins": {
         "eos": {
-            "script": "bpapi",
+            "script": "eosflareapi",
             "config": {
                 "timeout": 15000,
-                "endpoint": "https://api.eossweden.se"
+                "endpoint": "https://history.cryptolions.io"
             }
         },
         "novusphere": {

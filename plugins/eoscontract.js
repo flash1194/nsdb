@@ -19,6 +19,9 @@ class EOSContractPlugin extends Plugin {
     constructor(config, name) {
         super(config, name);
         this._insertions = {};
+
+        this._duplicates = 0;
+        this._unique_txid = [];
     }
     async setRecentDefault() {
         return await this.setRecent(RECENT_DEFAULT);
@@ -196,7 +199,10 @@ class EOSContractPlugin extends Plugin {
 
         for (var i = 0; i < actions.length; i++) {
             var action = actions[i];
-            action.offset = (this.recent.offset + 1) + i;
+
+            if (action.offset == undefined) {
+                action.offset = (this.recent.offset + 1) + i;
+            }
 
             if (typeof action.data == 'string') {
                 await this.deserializeAction(action);
@@ -210,11 +216,28 @@ class EOSContractPlugin extends Plugin {
                 }
             }
 
+            if (this.config.check_dup) {
+                if (this._unique_txid.includes(action.transaction)) {
+                    this._duplicates++;
+                    this.log(`detected duplicate ${action.transaction} - ${this._duplicates}`);
+                    continue;
+                }
+
+                this._unique_txid.push(action.transaction);
+            }
+
             await this.beforeInsertAction(action);
         }
 
         this.insert(this.config.collections[0].name, actions);
         await this.commit();
+
+        if (this.config.check_dup) {
+            if (this._duplicates.length > 1000) {
+                // trim down cache
+                this._duplicates = this._duplicates.slice(this._duplicates.length - 1000);
+            }
+        }
 
         const last_action = actions[actions.length - 1];
         this.setRecent(last_action);

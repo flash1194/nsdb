@@ -42,7 +42,7 @@ class EOSForumPlugin extends EOSContractPlugin {
         if (action.createdAt >= 1538136731 && action.name == 'post') {
             var tags = action.data.content.match(/\B(\\)?#([a-zA-Z0-9_]+)\b/g);
             if (tags) {
-                tags = tags.map(t => t.toLowerCase());
+                tags = tags.map(t => t.substring(1).toLowerCase());
 
                 action.tags = Array.from(new Set(tags));
                 if (action.data.json_metadata.edit) {

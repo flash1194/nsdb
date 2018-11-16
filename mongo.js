@@ -1,5 +1,4 @@
 const mongodb = require("mongodb");
-const bson = require('bson');
 
 class MongoInterface {
     start(config) {

@@ -111,7 +111,7 @@ class EOSFlareAPIPlugin extends BlockProducerAPIPlugin {
                 account: a.account,
                 transaction: a.trx_id,
                 blockId: a.block_num,
-                createdAt: new Date(a.block_time).getTime() / 1000,
+                createdAt: Math.floor(new Date(a.block_time).getTime() / 1000),
                 name: a.name,
                 data: a.data
             };

@@ -38,7 +38,7 @@ class BlockProducerAPIPlugin extends EOSAPIPlugin {
                     account: act.account,
                     transaction: a.trx_id,
                     blockId: a.block_num,
-                    createdAt: new Date(a.block_time).getTime() / 1000,
+                    createdAt: Math.floor(new Date(a.block_time).getTime() / 1000),
                     name: act.name, 
                     data: act.data
                 };
@@ -50,7 +50,7 @@ class BlockProducerAPIPlugin extends EOSAPIPlugin {
                     account: act.account,
                     transaction: trace.trx_id,
                     blockId: a.block_num,
-                    createdAt: new Date(a.block_time).getTime() / 1000,
+                    createdAt: Math.floor(new Date(a.block_time).getTime() / 1000),
                     name: act.name,
                     data: act.data
                 };

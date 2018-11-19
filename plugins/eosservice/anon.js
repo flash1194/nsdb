@@ -79,14 +79,13 @@ function ValidateSession(req, anon_id, anon_config) {
     //
     // use anon_id as api key for custom delays
     //
-    var delay = anon_config.delays[(anon_id) ? anon_id.pub : 'default'];
-    if (!delay) {
-        delay = anon_config.delays['default'];
+    var delay = anon_config.delays['default'];
+    if (anon_id && (anon_id.pub in anon_config.delays)) {
+        delay = anon_config.delays[anon_id.pub];
     }
-    if (isNaN(delay)) {
-        delay = 0;
-    }
-
+    
+    delay = isNaN(delay) ? 0 : delay;
+    
     API_SESSION[session_key] = time_now + delay;
 }
 

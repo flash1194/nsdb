@@ -1,8 +1,10 @@
 const mongodb = require("mongodb");
+const Plugin = require("../plugin");
+const router = require('./router');
 
-class MongoInterface {
-    start(config) {
-        this.config = config;
+class MongoDatabasePlugin extends Plugin {
+    constructor(config, name) {
+        super(config, name);
         this.client = null;
     }
     async getClient() {
@@ -25,6 +27,18 @@ class MongoInterface {
         var result = (await db.command(command));
         return result;
     }
+    async start(app) {
+        app.use('/api', router);
+    }
+    async test() {
+        try { 
+            await this.getClient();
+        }
+        catch (ex) {
+            return 1;
+        }
+        return 0;
+    }
 }
 
-module.exports = (new MongoInterface());
+module.exports = MongoDatabasePlugin;

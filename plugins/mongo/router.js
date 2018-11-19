@@ -1,28 +1,27 @@
 var express = require('express');
 var router = express.Router();
 
-const mongo = require('../mongo');
+const web = require('../web');
 
 var API_SESSION = {};
-
-function GetIP(req) {
-  var forward = req.headers["x-forwarded-for"]; // cloudflare
-  if (forward) {
-    return forward.split(',')[0];
-  }
-  return req.connection.remoteAddress;
-}
 
 router.post('/', async function (req, res, next) {
 
   async function getResult() {
     var result = {};
+
+    const mongo = web.GetPlugin('mongo');
+    if (!mongo) {
+      result.error = 'mongo plugin not found';
+      return result;
+    }
+
     var command = req.body;
 
     if (typeof command == 'object') {
       // backwards compatible bug fix...
-      var keys = Object.keys(req.body);
-      if (keys.length == 1 && req.body[keys[0]] == '') {
+      var keys = Object.keys(command);
+      if (keys.length == 1 && command[keys[0]] == '') {
         command = keys[0];
       }
     }
@@ -52,7 +51,8 @@ router.post('/', async function (req, res, next) {
 
     const ONE_MINUTE = 60000;
     const MAX_MAXTIMEMS = ONE_MINUTE * mongo.config.query_time_ratio;
-    const session_key = GetIP(req);
+    const session_key = web.Sha256(web.GetIP(req));
+
     var api_session = API_SESSION[session_key];
     if (!api_session) {
       API_SESSION[session_key] = api_session = {
@@ -77,7 +77,7 @@ router.post('/', async function (req, res, next) {
       result.sleep = Math.floor((command.maxTimeMS - maxTimeMS) / mongo.config.query_time_ratio);
       return result;
     }
-    
+
     try {
       result = await mongo.command(command);
     }
@@ -94,9 +94,7 @@ router.post('/', async function (req, res, next) {
     return result;
   }
 
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('content-type', 'application/json');
-  res.send(JSON.stringify(await getResult()));
+  web.Result(res, await getResult());
 });
 
 module.exports = router;

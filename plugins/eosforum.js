@@ -1,5 +1,3 @@
-const mongo = require('../mongo');
-
 const EOSContractPlugin = require('./eoscontract');
 const EOSFORUMRCPP_START = 1335182167;
 
@@ -38,6 +36,8 @@ class EOSForumPlugin extends EOSContractPlugin {
                 case 'unvote': break;
             }
         }
+
+        const mongo = this.plugin('mongo');
 
         if (action.createdAt >= 1538136731 && action.name == 'post') {
             var tags = action.data.content.match(/\B(\\)?#([a-zA-Z0-9_]+)\b/g);

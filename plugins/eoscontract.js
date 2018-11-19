@@ -1,4 +1,3 @@
-const mongo = require('../mongo');
 const Plugin = require('./plugin');
 
 const fs = require('fs');
@@ -27,6 +26,8 @@ class EOSContractPlugin extends Plugin {
         return await this.setRecent(RECENT_DEFAULT);
     }
     async setRecent(tx) {
+        const mongo = this.plugin('mongo');
+
         if (!tx) {
             const payload = (await mongo.command({
                 find: this.config.collections[0].name,
@@ -136,6 +137,9 @@ class EOSContractPlugin extends Plugin {
         if (!this.plugin('eos')) {
             return 1;
         }
+        if (!this.plugin('mongo')) {
+            return 2;
+        }
         return 0;
     }
     insert(collection, values) {
@@ -151,6 +155,8 @@ class EOSContractPlugin extends Plugin {
             insertions.push(values[i]);
     }
     async commit() {
+        const mongo = this.plugin('mongo');
+
         for (var key in this._insertions) {
             const documents = this._insertions[key];
             const result = await mongo.command({
@@ -211,8 +217,12 @@ class EOSContractPlugin extends Plugin {
             if (action.account == this.config.account) {
                 const json = this.config.json[action.name];
                 if (json) {
-                    try { action.data[json] = JSON.parse(action.data[json]); }
-                    catch (ex) { }
+                    var _json = action.data[json];
+                    try { action.data[json] = JSON.parse(_json); }
+                    catch (ex) {
+                        //console.log(_json);
+                        //console.log(ex);
+                    }
                 }
             }
 
@@ -243,6 +253,7 @@ class EOSContractPlugin extends Plugin {
         this.setRecent(last_action);
     }
     async createIndices() {
+        const mongo = this.plugin('mongo');
         const db = await mongo.getDatabase();
 
         for (var j = 0; j < this.config.collections.length; j++) {

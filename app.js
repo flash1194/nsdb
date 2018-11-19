@@ -4,8 +4,6 @@ var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var fs = require('fs');
 
-var apiRouter = require('./routes/api');
-
 var app = express();
 
 app.use(logger('dev'));
@@ -14,28 +12,13 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use('/api', apiRouter);
-
 (async function () {
 
     if (!fs.existsSync('config.json')) {
         fs.copyFileSync('public/default-config.json', 'config.json');
     }
 
-    const config = JSON.parse(fs.readFileSync('config.json'));
-
-    console.log('loading mongodb...');
-    const mongo = require('./mongo');
-    mongo.start(config.mongo);
-    try { 
-        await mongo.getClient();
-    }
-    catch (ex) {
-        console.log('failed to load mongo db');
-        console.log(ex);
-        return;
-    }
-    
+    const config = JSON.parse(fs.readFileSync('config.json'));    
     const plugins = require('./plugins');
 
     console.log('loading plugins...');
@@ -44,7 +27,12 @@ app.use('/api', apiRouter);
     console.log('running tests...');
     if (await plugins.test()) {
         console.log('starting plugins...');
-        await plugins.start();
+        await plugins.start(app);
+    }
+    else
+    {
+        console.log('tests failed, aborting...');
+        process.exit(1);
     }
     
 })();

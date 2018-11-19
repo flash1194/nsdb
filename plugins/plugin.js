@@ -8,6 +8,9 @@ class Plugin {
     async sleep(ms) {
         return new Promise((resolve) => setTimeout(resolve, ms));
     }
+    async start(app) {
+
+    }
     plugin(name) {
         return plugins[name];
     }

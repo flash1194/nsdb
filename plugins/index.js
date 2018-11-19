@@ -21,18 +21,24 @@ class PluginManager {
             }
         }
     }
-    async start() {
-        for (var key in this) {
-            if (this[key].start) {
-                this[key].start();
+    async forEach(callback) {
+        const keys = Object.keys(this);
+        for (var i = 0; i < keys.length; i++) {
+            const plugin = this[keys[i]];
+            if (plugin.config) {
+                await callback(plugin);
             }
         }
+    }
+    async start(app) {
+        await this.forEach(async (p) => {
+            p.start(app);
+        });
     }
     async test() {
         var all_ok = true;
 
-        for (var key in this) {
-            const plugin = this[key];
+        await this.forEach(async (plugin) => {
             if (plugin.test) {
                 try {
                     var code = (await plugin.test());
@@ -49,7 +55,7 @@ class PluginManager {
                     console.log(ex);
                 }
             }
-        }
+        });
 
         return all_ok;
     }

@@ -1,23 +1,40 @@
 {
     "port": 8099,
-    "mongo": {
-        "query_time_ratio": 0.5,
-        "connection": "mongodb://localhost:27017",
-        "database": "nsdb_test",
-        "commands": [
-            "find",
-            "count",
-            "aggregate",
-            "distinct",
-            "group"
-        ]
-    },
     "plugins": {
+        "mongo": {
+            "script": "mongo",
+            "config": {
+                "query_time_ratio": 0.5,
+                "connection": "mongodb://localhost:27017",
+                "database": "nsdb_test",
+                "commands": [
+                    "find",
+                    "count",
+                    "aggregate",
+                    "distinct",
+                    "group"
+                ]
+            }
+        },
         "eos": {
             "script": "eosflareapi",
             "config": {
                 "timeout": 15000,
-                "endpoint": "https://history.cryptolions.io"
+                "endpoint": "https://eos.greymass.com"
+            }
+        },
+        "eosservice": {
+            "script": "eosservice",
+            "config": {
+                "anon": {
+                    "contract": "eosforumrcpp",
+                    "key": "",
+                    "account": "eosforumanon",
+                    "permission": "active",
+                    "delays": {
+                        "default": 180000
+                    }
+                }
             }
         },
         "novusphere": {

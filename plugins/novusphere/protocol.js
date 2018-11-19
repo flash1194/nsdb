@@ -1,5 +1,3 @@
-const mongo = require('../../mongo');
-
 class NovusphereProtocol {
     constructor(plugin, action) {
         this.plugin = plugin;
@@ -15,6 +13,8 @@ class NovusphereProtocol {
         this.NS_POST_VOTE = plugin.config.collections[3].name;
     }
     async handleTransfer() {
+        const mongo = this.plugin.plugin('mongo');
+
         const memo = this.action.data.memo;
         const UPVOTE_FOR = 'upvote for ';
 
@@ -73,6 +73,8 @@ class NovusphereProtocol {
         }
     }
     async find(collection, limit, filter, create) {
+        const mongo = this.plugin.plugin('mongo');
+
         const existing = await mongo.command({
             find: collection,
             limit: limit,
@@ -107,6 +109,8 @@ class NovusphereProtocol {
         return find.length > 0 ? find[0] : null;
     }
     async forumVote() {
+        const mongo = this.plugin.plugin('mongo');
+
         if (!this.data.txid) {
             return;
         }

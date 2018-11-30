@@ -34,6 +34,13 @@
                     "delays": {
                         "default": 180000
                     }
+                },
+                "cors": {
+                    "whitelist": [
+                        "^https://www.youtube.com/oembed",
+                        "^https://api.d.tube/oembed",
+                        "^https://soundcloud.com/oembed"
+                    ]
                 }
             }
         },

@@ -21,7 +21,8 @@ class EOSFlareAPIPlugin extends BlockProducerAPIPlugin {
         var request = (await axios.post('https://api-pub.eosflare.io/v1/eosflare/get_account_actions', JSON.stringify({
             account: account,
             page: page,
-            limit: limit
+            limit: limit,
+            filterSpam: false
         }),
             {
                 headers: { 'Content-Type': 'application/json' },
@@ -54,6 +55,7 @@ class EOSFlareAPIPlugin extends BlockProducerAPIPlugin {
             var rel_index;
             var actions = [];
 
+            //  TODO: fix logic here... doesn't reget state_0
             // argh... "guessing" the page we're on might not quite work due to missing data
             for (; ;) {
                 const state_1 = (await this.getActionsFlare(account, current_page, count));

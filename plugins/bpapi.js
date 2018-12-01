@@ -34,6 +34,7 @@ class BlockProducerAPIPlugin extends EOSAPIPlugin {
             if (!trace) { // mongo plugin [crypto lions]
                 const act = a.act;
                 return {
+                    account_seq: a.receipt.account_sequence,
                     id: a.receipt.global_sequence,
                     account: act.account,
                     transaction: a.trx_id,
@@ -46,6 +47,7 @@ class BlockProducerAPIPlugin extends EOSAPIPlugin {
             else {
                 const act = trace.act;
                 return {
+                    account_seq: a.account_action_seq,
                     id: a.global_action_seq,
                     account: act.account,
                     transaction: trace.trx_id,

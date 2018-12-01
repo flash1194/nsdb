@@ -12,7 +12,7 @@ const RECENT_DEFAULT = {
     offset: -1
 }
 
-const ACTIONS_PER_QUERY = 25;
+const ACTIONS_PER_QUERY = 50;
 
 class EOSContractPlugin extends Plugin {
     constructor(config, name) {

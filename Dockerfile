@@ -22,7 +22,8 @@ COPY . /opt/apps/nsdb
 #Expose port 80 to external
 EXPOSE 8099
 
-RUN sed 's/localhost/mongo/' public/default-config.json
+#Replace localhost with mongo
+RUN sed -i 's/localhost/mongo/' public/default-config.json
 
 #Start the application
 CMD ["npm", "start"]

@@ -35,6 +35,7 @@ class MongoDatabasePlugin extends Plugin {
             await this.getClient();
         }
         catch (ex) {
+            console.log(ex);
             return 1;
         }
         return 0;

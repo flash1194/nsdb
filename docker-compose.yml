@@ -1,0 +1,19 @@
+version: "2"
+services:
+  mongo:
+    container_name: mongo
+    image: mongo
+    volumes:
+      - ./public:/public/db
+    command: mongod --port 27017
+
+  nsdb:
+    container_name: nsdb
+    restart: always
+    build: .
+    ports:
+      - "8099:8099"
+    depends_on:
+      - mongo
+    links:
+      - mongo
